@@ -1,0 +1,227 @@
+.container{
+    padding: 1.3rem;
+    background: rgb(251, 247, 247);
+    display: flex;
+    flex-direction: column;
+    gap: 1.3rem;
+}
+
+.backDropContainer{
+    width: 100%;
+    height: 30vh;
+    background: url(https://images.pexels.com/photos/956999/milky-way-starry-sky-night-sky-star-956999.jpeg);
+    background-size: cover;
+    background-repeat: no-repeat;
+    position: relative;
+    border-radius: 20px;
+}
+
+.backDropContainer img{
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 50%;
+    position: absolute;
+    bottom: -40px;
+    left: 3%;
+    text-align: center;
+    
+}
+
+.profileContianer_detials{
+    padding-top: 2rem;
+}
+
+
+.card{
+    display: flex;
+    flex-direction: column;
+    gap: 1.4rem;
+}
+
+
+
+.card_profileContianer{
+    width: fit-content;
+    max-width: 95%;
+    height: 400px;
+    object-fit: cover;
+    margin-top: 6px;
+}
+
+/* .backDrop{
+    width: 3.4rem;
+    height: auto;
+    object-fit: cover;
+    position: relative;
+} */
+
+.backDrop ::after{
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 10em;
+    height: 10em;
+    background: black;
+    position: absolute;
+    bottom: -40px;
+    left: 3%;
+    z-index: 3;
+}
+
+.backDropContainer>img:hover{
+    transform: scale(1.1);
+    cursor: pointer;
+}
+
+.backDrop_overlay{
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 50%;
+    position: absolute;
+    bottom: -40px;
+    left: 3%;
+    text-align: center;
+    z-index: 3;
+    transition: all 0.4;
+    cursor: pointer;
+    color: white;
+    opacity: 0.0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+}
+.backDrop_overlay:hover{
+    background: black;
+    opacity: 0.7;
+}
+
+.card_profileContianer>img{
+    width: 3.4rem;
+    height: auto;
+    object-fit: cover;
+}
+
+.connection{
+    display: flex;
+    justify-content: end;
+    align-items: center;
+    padding-top: 0.5rem;
+    margin-right: 30px;
+}
+
+.deleteBtn{
+    display: flex;
+    justify-content: end;
+    padding-right:0.5rem ;
+}
+
+
+
+.workHistoryContainer{
+    display: flex;
+    gap: 1.4rem;
+    padding-top: 1.4rem;
+    width: 100%;
+    flex-wrap: wrap;
+}
+
+.workHistoryCard{
+    min-width: fit-content;
+    padding-inline: 2.5rem;
+    padding-block: 1rem;
+    border-radius: 10px;
+    box-shadow: 10px 10px 15px rgb(173, 173, 173);
+}
+
+.profileContianer_detials input{
+    outline: none;
+    border-style: none;
+    padding-block: 9px;
+    padding-inline: 10px;
+    width: fit-content;
+    background-color:rgb(251, 247, 247); 
+    padding-left: 0;
+}
+
+.nameEdit{
+    font-size: 1.5rem;
+    font-weight: bold;
+
+}
+
+.connectionBtn{
+    padding-inline: 0.8rem;
+    padding-block: 0.7rem;
+    background: rgba(3, 93, 183, 0.905);
+    outline: none;
+    border: none;
+    color: white;
+    border-radius: 10px;
+    cursor: pointer;
+    width: fit-content;
+}
+
+.profileContianer_detials textarea{
+    outline: none;
+    border: none;
+    padding-inline:10px;
+    font-family:"Poppins" !important;
+    font-size: 17px;
+    background-color:rgb(251, 247, 247); 
+}
+
+
+.usernameEdit {
+  border: none;
+  outline: none;
+  font-size: 1rem;
+}
+
+
+.addWorkBtn{
+    padding-inline: 1.3rem;
+    background: white;
+    border: 1px dotted silver;
+    padding-block: 10px; 
+    border-radius: 10px;
+    margin-top: 10px;
+}
+
+
+.commentContainer{
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  top: 0;
+  left: 0;
+  z-index: 5;
+  background: rgba(0, 0, 0, 0.7);
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.allCommentsContainer{
+  width: 40vw;
+  height: fit-content;
+  background: white;
+  border-radius: 10px;
+  position: relative;
+  padding: 1.4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.inputField{
+    padding-inline: 1.3rem;
+    padding-block: 0.8rem;
+    outline: none;
+    border-radius: 10px;
+    border: 1px solid silver;
+    width: 90%;
+}

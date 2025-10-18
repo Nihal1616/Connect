@@ -1,0 +1,95 @@
+.homeContainer{
+    display: flex;
+    gap: 24px;
+}
+
+.homeContainer>div:nth-child(odd){
+    flex: 0.2;
+}
+
+.homeContainer>div:nth-child(even){
+    flex: 0.6;
+}
+
+.homeContainer_leftBar{
+    display: flex;
+    flex-direction: column;
+    gap:1.2rem ;
+    align-items: center;
+    font-size: 1.2rem;
+    border-right: 1px solid silver;
+}
+
+.sideBarOptions{
+    display: flex;
+    align-items: center;
+    font-size: 1.4rem;
+    gap: 1.2rem;
+    width: 80%;
+    cursor: pointer;
+    transition: all 0.2s;
+    opacity: 0.7;
+}
+
+.sideBarOptions:hover{
+    transform: scale(1.01);
+    opacity: 1;
+}
+
+.sideBarOptions> svg{
+    height: 1.2em;
+}
+
+.homeContainer_extraContainer{
+    border-left: 1px solid rgb(222, 222, 222) ;
+    padding-left:  1.2rem;
+}
+
+.homeContainer_feedContainer{
+    padding-inline: 0.6rem;
+    height: 100vh;
+    overflow-y: scroll;
+
+}
+
+
+.mobileNavBarView{
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100vw;
+    height: 6vh;
+    display: none;
+    justify-content: space-around;
+    background: white;
+    align-items: center;
+}
+
+.mobileNavBarView svg{
+    height: 1.5rem;
+    width: 1.5rem;
+}
+
+
+
+
+
+
+@media only screen and (max-width:600px){
+    .homeContainer_extraContainer{
+        display: none;
+
+    }
+    .homeContainer{
+        display:block;
+    }
+    .homeContainer_leftBar{
+        display: none;
+    }
+    .mobileNavBarView{
+        display: flex;
+    }
+    .homeContainer_feedContainer{
+        padding-bottom: 8vh;
+    }
+}

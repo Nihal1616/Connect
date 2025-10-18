@@ -1,0 +1,239 @@
+.scrollComponent {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
+.userProfile {
+  border-radius: 100%;
+  height: 70%;
+  width: 10%;
+  object-fit: cover;
+}
+
+.createPostContainer {
+  display: flex;
+  height: 10vh;
+  width: 80%;
+  padding-inline: 0.8rem;
+  gap: 1rem;
+  align-items: center;
+  background-color: rgb(245, 241, 241);
+  border-radius: 10px;
+  padding: 10px;
+  position: relative;
+}
+
+.createPostContainer > textarea {
+  width: 100%;
+}
+
+.Fab {
+  display: flex;
+  justify-content: center;
+  border-radius: 100%;
+}
+
+.Fab > svg {
+  width: fit-content;
+  height: 30px;
+  background-color: rgb(11, 233, 141);
+  color: white;
+  border-radius: 100%;
+}
+
+.textArea {
+  width: 80%;
+  height: 70%;
+  border: 1px solid silver;
+  border-radius: 10px;
+  font-family: Arial, Helvetica, sans-serif;
+  padding-inline: 1.5rem;
+  padding-block: 0.4rem;
+  outline: none;
+}
+
+.uploadButton {
+  position: absolute;
+  right: 0;
+  bottom: -40px;
+  background-color: rgb(122, 209, 122);
+  color: white;
+  border-radius: 10px;
+  padding-inline: 1rem;
+  padding-block: 0.4rem;
+  cursor: pointer;
+}
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+}
+
+
+
+.singleCard {
+  width: 100%;
+  border-radius: 10px 10px 0px 0px;
+  border-bottom: 1px solid rgb(179, 179, 179);
+}
+
+.singleCard_profileContianer {
+  display: flex;
+  gap: 1.2rem;
+  padding: 1.2rem;
+  padding-right: 3.4rem;
+}
+
+.singleCard_profileContianer > img {
+  border-radius: 50%;
+  width: 70px;
+  height: 60px;
+  object-fit: cover;
+}
+
+.singleCard_image {
+    width: 100%;
+    padding-top: 0.6rem;
+    height: fit-content;
+    overflow: hidden;
+}
+
+.singleCard_image> img{
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+
+.optionsContainer{
+  display: flex;
+  height: auto;
+  width: 100%;
+  justify-content: space-between;
+  padding-block: 0.6rem;
+}
+
+.singleOption_optionsContianer{
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  justify-content: center;
+  
+}
+
+.singleOption_optionsContianer > svg {
+  height: 100%;
+  width: 10%;
+  min-width: 1rem;
+  cursor: pointer;
+}
+
+.commentContainer{
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  background: rgba(0, 0, 0, 0.7);
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.allCommentsContainer{
+  min-width: 40svw;
+  height: 80vh;
+  background: white;
+  border-radius: 10px;
+  position: relative;
+  padding: 1.4rem;
+
+}
+
+.postCommentContainer{
+  position: absolute;
+  bottom: 1.2rem;
+  left: 1.2rem;
+  width: 90%;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  gap: 1.2rem;
+}
+
+.postCommentContainer> input{
+  flex: 0.9;
+  padding-inline: 1.4rem;
+  padding-block: 1.2rem;
+  border: none;
+  background-color: rgb(228, 228, 228);
+  border-radius: 10px;
+  outline: none;
+}
+
+.postCommentContainer> input:focus{
+  outline:1px solid silver;
+}
+
+.postCommentContainer_commentBtn{
+  flex: 0.1;
+  width: fit-content;
+  background-color: rgb(25, 135, 84);
+  padding: 0.9rem;
+  border-radius: 10px;
+  text-align: center;
+  color: white;
+  cursor: pointer;
+}
+
+.likePopup {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: #333;
+  color: #fff;
+  padding: 12px 20px;
+  border-radius: 8px;
+  opacity: 0.95;
+  z-index: 10000; /* make sure it overlays everything */
+  font-weight: bold;
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 0.95;
+  }
+}
+
+
+
+
+
+@media screen and (max-width:600px){
+  .allCommentsContainer{
+    width: 80%;
+  }
+  .singleCard_profileContianer > img {
+  border-radius: 50%;
+  width: 30%;
+  height: 60px;
+  object-fit: cover;
+}
+.userProfile {
+  border-radius: 100%;
+  height: 90%;
+  width: 30%;
+  object-fit: cover;
+}
+
+}
