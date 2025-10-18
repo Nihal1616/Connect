@@ -137,6 +137,7 @@ export default function ProfilePage() {
                         width: "fit-content",
                         alignItems: "center",
                         gap: "1.2rem",
+      
                       }}
                     >
                       <input
@@ -155,25 +156,15 @@ export default function ProfilePage() {
                       />
                     </div>
                     <div className={styles.usernameWrapper}>
-                      <span className={styles.atSymbol}>@</span>
-                      <input
-                        type="text"
-                        className={styles.usernameEdit}
-                        value={userProfile.userId.username}
-                        onChange={(e) =>
-                          setUserProfile({
-                            ...userProfile,
-                            userId: {
-                              ...userProfile.userId,
-                              username: e.target.value,
-                            },
-                          })
-                        }
-                      />
+                      
+                      <p className={styles.usernameEdit}>
+                        @{userProfile.userId.username}
+                      </p>
+
                     </div>
                   </div>
 
-                  {userProfile.bio.length!=0 ? (
+                  {userProfile.bio.length != 0 ? (
                     <div>
                       <textarea
                         value={userProfile.bio}
@@ -192,7 +183,7 @@ export default function ProfilePage() {
                     </div>
                   ) : (
                     <div>
-                      <h4 style={{color:"grey"}}>Add your Bio</h4>
+                      <h4 style={{ color: "grey" }}>Add your Bio</h4>
                       <textarea
                         value={userProfile.bio}
                         onChange={(e) => {

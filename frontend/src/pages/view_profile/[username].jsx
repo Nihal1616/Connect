@@ -130,7 +130,8 @@ export default function ViewProfilePage({ userProfile }) {
                     display: "flex",
                     width: "fit-content",
                     alignItems: "center",
-                    gap: "0.7rem",
+                    gap: "0.5rem",
+                    flexDirection:"column"
                   }}
                 >
                   <h2>{userProfile.userId.name}</h2>
