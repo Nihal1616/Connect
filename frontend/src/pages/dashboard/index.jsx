@@ -102,7 +102,7 @@ export default function Dashboard() {
               <div className={styles.createPostContainer}>
                 <img
                   className={styles.userProfile}
-                  src={`http://localhost:8080/uploads/${
+                  src={`${BASE_URL}/uploads/${
                     authState.user?.userId?.profilePicture || "default.jpg"
                   }`}
                   alt="Profile"
