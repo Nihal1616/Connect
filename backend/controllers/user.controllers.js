@@ -6,6 +6,8 @@ import bcrypt from "bcrypt";
 import crypto from "crypto";
 import PDFDocument from 'pdfkit'
 import fs from 'fs';
+import axios from 'axios';
+import path from 'path';
 import  ConnectionRequest  from "../models/connections.model.js";
 import Comment from "../models/comments.model.js"
 
@@ -20,8 +22,66 @@ const convertUserDataToPDF = async (userData) => {
   doc.pipe(stream);
 
   // === Profile Picture Section ===
+  // We'll support both local filenames (stored in DB) and absolute URLs.
+  // If the profilePicture is an absolute URL, download it to a temporary file
+  // inside uploads/ and use that for PDF rendering.
+  let tempDownloadedImage = null;
+  let localImagePath = null;
   if (userData.userId.profilePicture) {
-    const imagePath = `uploads/${userData.userId.profilePicture}`;
+    let picValue = userData.userId.profilePicture;
+    try {
+      // normalize to string and trim
+      picValue = String(picValue).trim();
+
+      // If picValue looks like an absolute URL (case-insensitive), download it.
+      if (/^https?:\/\//i.test(picValue) || picValue.includes('://')) {
+        try {
+            // try to request the image using a safe encoded URL
+            const safeUrl = encodeURI(picValue);
+            const resp = await axios.get(safeUrl, { responseType: 'arraybuffer' });
+            const ext = path.extname(new URL(safeUrl).pathname) || '.jpg';
+            const tempName = crypto.randomBytes(12).toString('hex') + ext;
+            const tempPath = `uploads/${tempName}`;
+            fs.writeFileSync(tempPath, resp.data);
+            tempDownloadedImage = tempPath;
+            localImagePath = tempPath;
+          } catch (downloadErr) {
+            console.warn('Failed to download remote profile picture:', downloadErr.message);
+            // if download fails, fallback to the default placeholder image to avoid ENOENT
+            localImagePath = 'uploads/default.jpg';
+          }
+      }
+
+      // If we didn't set localImagePath via download, build a safe local path
+      if (!localImagePath) {
+        // If stored value already contains uploads/ or starts with a slash, normalize it
+        if (picValue.startsWith('/uploads/')) {
+          localImagePath = picValue.slice(1); // remove leading slash
+        } else if (picValue.startsWith('uploads/')) {
+          localImagePath = picValue;
+        } else {
+          // treat as filename
+          localImagePath = `uploads/${picValue}`;
+        }
+      }
+
+      // Ensure the resolved localImagePath actually exists. If not, use default placeholder
+      try {
+        if (!fs.existsSync(localImagePath)) {
+          console.warn('Resolved image path does not exist, using default:', localImagePath);
+          localImagePath = 'uploads/default.jpg';
+        }
+      } catch (e) {
+        console.warn('Error checking image path existence:', e.message);
+        localImagePath = 'uploads/default.jpg';
+      }
+    } catch (err) {
+      console.error('Failed to prepare profile image for PDF (normalize):', err);
+      localImagePath = null;
+    }
+  }
+
+  if (localImagePath) {
     const pageWidth = doc.page.width;
     const centerX = pageWidth / 2;
     const topMargin = 60;
@@ -40,7 +100,7 @@ const convertUserDataToPDF = async (userData) => {
     doc
       .circle(centerX, topMargin + radius, radius)
       .clip()
-      .image(imagePath, centerX - radius, topMargin, {
+      .image(localImagePath, centerX - radius, topMargin, {
         width: radius * 2,
         height: radius * 2,
       });
@@ -146,7 +206,15 @@ const convertUserDataToPDF = async (userData) => {
   doc.end();
 
   return new Promise((resolve, reject) => {
-    stream.on("finish", () => resolve(outputPath));
+    stream.on("finish", () => {
+      // clean up any temporary downloaded image we created
+      if (tempDownloadedImage) {
+        fs.unlink(tempDownloadedImage, (e) => {
+          if (e) console.warn('Failed to remove temp image:', e.message);
+        });
+      }
+      resolve(outputPath);
+    });
     stream.on("error", (err) => reject(err));
   });
 };
@@ -228,19 +296,52 @@ export const uploadProfilePicture = async (req, res) => {
       return res.status(400).json({ message: "No file uploaded" });
     }
 
-    // ✅ Build the full URL for the uploaded file
-    const imageUrl = `${req.protocol}://${req.get("host")}/uploads/${
-      req.file.filename
-    }`;
+    // Before saving new filename, try to remove the previous file (if any)
+    try {
+      const prev = user.profilePicture;
+      if (prev && typeof prev === 'string') {
+        let prevFilename = prev;
+        // If prev is a full URL, extract basename
+        if (prev.startsWith('http://') || prev.startsWith('https://')) {
+          try {
+            prevFilename = path.basename(new URL(prev).pathname);
+          } catch (e) {
+            prevFilename = path.basename(prev);
+          }
+        } else {
+          // could be a path or filename
+          prevFilename = path.basename(prev);
+        }
 
-    // ✅ Save public URL instead of just filename
-    user.profilePicture = imageUrl;
+        // avoid deleting the default placeholder image
+        if (prevFilename && prevFilename !== 'default.jpg' && prevFilename !== req.file.filename) {
+          const prevPath = `uploads/${prevFilename}`;
+          if (fs.existsSync(prevPath)) {
+            try {
+              fs.unlinkSync(prevPath);
+            } catch (e) {
+              console.warn('Failed to remove previous profile picture:', e.message);
+            }
+          }
+        }
+      }
+    } catch (e) {
+      console.warn('Error while attempting to remove previous profile picture:', e.message);
+    }
+
+    // Build the public URL (useful for responses)
+    const imageUrl = `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`;
+
+    // Store only the filename in DB for consistency
+    user.profilePicture = req.file.filename;
 
     await user.save();
 
     return res.json({
       message: "Profile picture updated successfully",
-      profilePicture: imageUrl,
+      // return both the stored filename and the public URL
+      profilePicture: req.file.filename,
+      url: imageUrl,
     });
   } catch (err) {
     console.error(err);
@@ -352,6 +453,7 @@ export const getAllUserProfile=async(req,res)=>{
 
 //   return res.json({"message":outputPath})
 // }
+
 export const downloadprofile = async (req, res) => {
   try {
     const user_id = req.query.user_id;
@@ -373,10 +475,40 @@ export const downloadprofile = async (req, res) => {
         .json({ message: "Profile not found for this user" });
     }
 
+    // ✅ Generate the PDF and get the file path
     const outputPath = await convertUserDataToPDF(userProfile);
-    return res.json({ message: outputPath });
+
+    // ✅ Extract only filename (no "uploads/" prefix, no URL)
+    const fileName = path.basename(outputPath);
+
+    // ✅ Ensure the file exists before sending back
+    const absolutePath = path.join("uploads", fileName);
+    if (!fs.existsSync(absolutePath)) {
+      return res.status(404).json({ message: "File not found on server" });
+    }
+
+    // ✅ Send only filename to frontend
+    return res.json({ message: fileName });
   } catch (err) {
     console.error("Error in downloadprofile:", err);
+    return res.status(500).json({ message: err.message });
+  }
+};
+
+
+// Return a full public URL for a stored uploads filename.
+export const getUploadUrl = async (req, res) => {
+  try {
+    const { file } = req.query;
+    console.log('getUploadUrl called, file=', file);
+    if (!file) return res.status(400).json({ message: 'file query param is required' });
+
+    // sanitize to basename to avoid path traversal
+    const filename = path.basename(file);
+    const url = `${req.protocol}://${req.get('host')}/uploads/${filename}`;
+    return res.json({ url, filename });
+  } catch (err) {
+    console.error('getUploadUrl error:', err);
     return res.status(500).json({ message: err.message });
   }
 };

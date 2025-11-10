@@ -4,7 +4,7 @@ import DashboardLayout from "@/layout/DashboardLayout";
 import UserLayout from "@/layout/UserLayout";
 import React, { useEffect, useState } from "react";
 import styles from "./index.module.css";
-import { BASE_URL, clientServer } from "@/config";
+import { BASE_URL, clientServer, getImageUrl } from "@/config";
 import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/router";
 
@@ -98,10 +98,7 @@ export default function ProfilePage() {
                 type="file"
                 id="profilePictureUpload"
               />
-              <img
-                className={styles.backDrop}
-                src={`${BASE_URL}/uploads/${userProfile.userId?.profilePicture}`}
-              />
+              <img className={styles.backDrop} src={getImageUrl(userProfile.userId?.profilePicture)} />
             </div>
             {userProfile != authState.user && (
               <div
@@ -240,15 +237,9 @@ export default function ProfilePage() {
                             )}
 
                             {post.media !== "" ? (
-                              <img
-                                className={styles.card_profileContianer}
-                                src={`${BASE_URL}/uploads/${post.media}`}
-                                alt="Post"
-                              />
+                              <img className={styles.card_profileContianer} src={getImageUrl(post.media)} alt="Post" />
                             ) : (
-                              <div
-                                style={{ width: "3.4rem", height: "3.4rem" }}
-                              ></div>
+                              <div style={{ width: "3.4rem", height: "3.4rem" }}></div>
                             )}
                           </div>
 

@@ -3,7 +3,7 @@ import UserLayout from "@/layout/UserLayout";
 import DashboardLayout from "@/layout/DashboardLayout";
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllUsers } from '@/config/redux/action/authAction';
-import { BASE_URL } from '@/config';
+import { BASE_URL, getImageUrl } from '@/config';
 import styles from "./index.module.css"
 import { useRouter } from 'next/router';
 
@@ -36,11 +36,7 @@ export default function DiscoverPage() {
 
                   }}
                    key={user._id} className={styles.userCard}>
-                    <img
-                    className={styles.userard_image}
-                      src={`${BASE_URL}/uploads/${user.userId.profilePicture}`}
-                      alt="profile"
-                    />
+                    <img className={styles.userard_image} src={getImageUrl(user.userId.profilePicture)} alt="profile" />
                     <div>
                       <h1>{user.userId.name}</h1>
                       <p>@{user.userId.username}</p>

@@ -3,7 +3,7 @@ import UserLayout from "@/layout/UserLayout";
 import DashboardLayout from "@/layout/DashboardLayout";
 import { useDispatch, useSelector } from 'react-redux';
 import { AcceptConnection, getAllUsers, getConnectionsRequest, getMyConnectionsRequest } from '@/config/redux/action/authAction';
-import { BASE_URL } from '@/config';
+import { BASE_URL, getImageUrl } from '@/config';
 import styles from "./index.module.css"
 import { useRouter } from 'next/router';
 import { connection } from 'next/server';
@@ -62,10 +62,7 @@ export default function MyConnectionsPage() {
                       }}
                     >
                       <div className={styles.profilePicture}>
-                        <img
-                          src={`${BASE_URL}/uploads/${user.userId.profilePicture}`}
-                          alt="Profile"
-                        />
+                        <img src={getImageUrl(user.userId.profilePicture)} alt="Profile" />
                       </div>
 
                       <div className={styles.userInfo}>
@@ -115,10 +112,7 @@ export default function MyConnectionsPage() {
                   }}
                 >
                   <div className={styles.profilePicture}>
-                    <img
-                      src={`${BASE_URL}/uploads/${user.userId.profilePicture}`}
-                      alt="Profile"
-                    />
+                    <img src={getImageUrl(user.userId.profilePicture)} alt="Profile" />
                   </div>
 
                   <div className={styles.userInfo}>

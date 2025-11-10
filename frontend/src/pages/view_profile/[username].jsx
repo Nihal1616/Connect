@@ -1,4 +1,4 @@
-import { BASE_URL, clientServer } from "@/config";
+import { BASE_URL, clientServer, getImageUrl } from "@/config";
 import DashboardLayout from "@/layout/DashboardLayout";
 import UserLayout from "@/layout/UserLayout";
 import { useSearchParams } from "next/navigation";
@@ -26,6 +26,7 @@ export default function ViewProfilePage({ userProfile }) {
   const [isCurrentUserInConnection, setIsCurrentUserInConnection] =
     useState(false);
   const [isConnectionNull, setIsConnectionNull] = useState(true);
+  const [downloadError, setDownloadError] = useState("");
   
 
   const getUserPost = async () => {
@@ -106,15 +107,32 @@ export default function ViewProfilePage({ userProfile }) {
     getUserPost();
   }, []);
 
+  const handleDownloadResume = async () => {
+    setDownloadError("");
+    try {
+      // Request backend to generate the resume PDF for this user
+      const resp = await clientServer.get(`/user/download_resume`, {
+        params: { user_id: userProfile.userId._id },
+      });
+
+      const fileName = resp.data?.message;
+      if (!fileName) throw new Error("No file returned from server");
+
+      const publicUrl = `${BASE_URL}/uploads/${fileName}`;
+      window.open(publicUrl, "_blank");
+    } catch (err) {
+      console.error("Failed to download PDF:", err);
+      setDownloadError("Unable to download resume. Try again later.");
+    }
+  };
+
 
   return (
     <UserLayout>
       <DashboardLayout>
         <div className={styles.container}>
           <div className={styles.backDropContainer}>
-            <img
-              src={`${BASE_URL}/uploads/${userProfile.userId.profilePicture}`}
-            />
+            <img src={getImageUrl(userProfile.userId.profilePicture)} />
           </div>
           <div className={styles.profileContianer_detials}>
             <div
@@ -174,21 +192,7 @@ export default function ViewProfilePage({ userProfile }) {
                   )}
 
                   <div
-                    onClick={async () => {
-                      try {
-                        const response = await clientServer.get(
-                          `/user/download_resume?user_id=${userProfile.userId._id}`
-                        );
-
-                        const fileName = response.data.message; // fix typo here
-                        const url = `${BASE_URL}/uploads/${fileName}`; // include uploads folder
-
-                        // Open PDF in new tab
-                        window.open(url, "_blank");
-                      } catch (err) {
-                        console.error("Failed to download PDF:", err);
-                      }
-                    }}
+                    onClick={handleDownloadResume}
                     style={{
                       cursor: "pointer",
                       border: "1px solid black",
@@ -214,6 +218,11 @@ export default function ViewProfilePage({ userProfile }) {
                       />
                     </svg>
                   </div>
+                  {downloadError && (
+                    <p style={{ color: "#c0392b", marginTop: "0.5rem" }}>
+                      {downloadError}
+                    </p>
+                  )}
                 </div>
 
                 <div style={{ marginTop: "1rem" }}>
@@ -229,14 +238,9 @@ export default function ViewProfilePage({ userProfile }) {
                       <div className={styles.card}>
                         <div className={styles.card_profileContianer}>
                           {post.media !== "" ? (
-                            <img
-                              src={`${BASE_URL}/uploads/${post.media}`}
-                              alt="Post"
-                            />
+                            <img src={getImageUrl(post.media)} alt="Post" />
                           ) : (
-                            <div
-                              style={{ width: "3.4rem", height: "3.4rem" }}
-                            ></div>
+                            <div style={{ width: "3.4rem", height: "3.4rem" }}></div>
                           )}
                         </div>
 

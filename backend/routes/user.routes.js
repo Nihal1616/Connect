@@ -4,6 +4,7 @@ import {
   acceptConnectionsRequest,
   downloadprofile,
   getAllUserProfile,
+  getUploadUrl,
   getMyConnectionsRequest,
   getUserAndProfile,
   getUserProfileAndUserBasedUsername,
@@ -41,6 +42,7 @@ router.route("/get_user_and_profile").get(getUserAndProfile);
 router.route("/update_profile_data").post(updateProfileData);
 router.route("/user/get_all_users").get(getAllUserProfile);
 router.route("/user/download_resume").get(downloadprofile);
+router.route('/api/uploads/url').get(getUploadUrl);
 router.route("/user/send_connections_request").post(sendConnectionRequest);
 router.route("/user/getConnectionRequest").get(getMyConnectionsRequest);
 router.route("/user/user_connection_request").get(WhatAreMyConnections);

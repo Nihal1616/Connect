@@ -14,7 +14,7 @@ import { useDispatch, useSelector } from "react-redux";
 import DashboardLayout from "@/layout/DashboardLayout";
 import { getAllUsers } from "@/config/redux/action/authAction";
 import styles from "./index.module.css";
-import { BASE_URL } from "@/config";
+import { BASE_URL, getImageUrl } from "@/config";
 import { resetPostId } from "@/config/redux/reducer/postReducer";
 
 export default function Dashboard() {
@@ -102,9 +102,7 @@ export default function Dashboard() {
               <div className={styles.createPostContainer}>
                 <img
                   className={styles.userProfile}
-                  src={`${BASE_URL}/uploads/${
-                    authState.user?.userId?.profilePicture || "default.jpg"
-                  }`}
+                  src={getImageUrl(authState.user?.userId?.profilePicture)}
                   alt="Profile"
                 />
                 <textarea
@@ -149,10 +147,7 @@ export default function Dashboard() {
                   return (
                     <div key={post._id} className={styles.singleCard}>
                       <div className={styles.singleCard_profileContianer}>
-                        <img
-                          src={`${BASE_URL}/uploads/${post.userId.profilePicture}`}
-                          alt="Profile"
-                        />
+                        <img src={getImageUrl(post.userId.profilePicture)} alt="Profile" />
                         <div>
                           <div
                             style={{
@@ -202,10 +197,7 @@ export default function Dashboard() {
 
                           <div className={styles.singleCard_image}>
                             {post.media !== "" ? (
-                              <img
-                                src={`${BASE_URL}/uploads/${post.media}`}
-                                alt="Post"
-                              />
+                              <img src={getImageUrl(post.media)} alt="Post" />
                             ) : (
                               <></>
                             )}
@@ -310,10 +302,7 @@ export default function Dashboard() {
                     {postState.comments?.map((comment, index) => {
                       return (
                         <div className={styles.singleComment} key={comment._id}>
-                          <img
-                            src={`${BASE_URL}/${comment.userId.profilePicture}`}
-                            alt=""
-                          />
+                          <img src={getImageUrl(comment.userId.profilePicture)} alt="" />
 
                           <div>
                             <p
