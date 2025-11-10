@@ -215,20 +215,39 @@ export const login = async (req, res) => {
 
 export const uploadProfilePicture = async (req, res) => {
   const { token } = req.body;
+
   try {
-    const user = await User.findOne({ token: token });
+    // Find user by token
+    const user = await User.findOne({ token });
 
-    if (!user) return res.status(404).json({ message: "User not found" });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
 
-    user.profilePicture = req.file.filename;
+    if (!req.file) {
+      return res.status(400).json({ message: "No file uploaded" });
+    }
+
+    // ✅ Build the full URL for the uploaded file
+    const imageUrl = `${req.protocol}://${req.get("host")}/uploads/${
+      req.file.filename
+    }`;
+
+    // ✅ Save public URL instead of just filename
+    user.profilePicture = imageUrl;
 
     await user.save();
 
-    return res.json({ message: "profile Picture Updated" });
+    return res.json({
+      message: "Profile picture updated successfully",
+      profilePicture: imageUrl,
+    });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ message: err.message });
   }
 };
+
 
 export const updateUserProfile = async (req, res) => {
   try {
